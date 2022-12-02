@@ -1,10 +1,9 @@
 package com.me.springbootblogapp.dataAccess.abstracts;
 
-import com.me.springbootblogapp.entities.Post;
+import com.me.springbootblogapp.entities.Account;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface PostRepository extends JpaRepository<Post, Long> {
-
+public interface AccountRepository extends JpaRepository<Account,Long> {
 }

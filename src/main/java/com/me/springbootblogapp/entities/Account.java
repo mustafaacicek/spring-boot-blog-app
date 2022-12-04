@@ -1,15 +1,17 @@
 package com.me.springbootblogapp.entities;
 
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 @Entity
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class Account {
@@ -28,4 +30,21 @@ public class Account {
 
     @OneToMany(mappedBy = "account")
     private List<Post> posts;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "user_authority",
+    joinColumns = {@JoinColumn (name="account_id", referencedColumnName = "id")},
+     inverseJoinColumns = {@JoinColumn(name = "authority_name",referencedColumnName = "name")})
+    private Set<Authority> authorities=new HashSet<>();
+
+    @Override
+    public String toString(){
+        return "Account{" +
+                ", firstName='" + firstName + "'" +
+                ", lastName='" + lastName + "'" +
+                ", email='" + email + "'" +
+                ", authorities='" + authorities +
+                "}";
+    }
+
 }

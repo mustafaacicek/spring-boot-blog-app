@@ -3,13 +3,17 @@ package com.me.springbootblogapp.config;
 
 import com.me.springbootblogapp.business.concretes.AccountManager;
 import com.me.springbootblogapp.business.concretes.PostManager;
+import com.me.springbootblogapp.dataAccess.abstracts.AuthorityRepository;
 import com.me.springbootblogapp.entities.Account;
+import com.me.springbootblogapp.entities.Authority;
 import com.me.springbootblogapp.entities.Post;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Component
 public class SeedData implements CommandLineRunner {
@@ -20,6 +24,9 @@ public class SeedData implements CommandLineRunner {
     @Autowired
     private AccountManager accountManager;
 
+    @Autowired
+    private AuthorityRepository authorityRepository;
+
 
 
     @Override
@@ -27,6 +34,15 @@ public class SeedData implements CommandLineRunner {
         List<Post> posts = postManager.getAll();
 
         if (posts.size()==0){
+            Authority user = new Authority();
+            user.setName("ROLE_USER");
+            authorityRepository.save(user);
+
+            Authority admin = new Authority();
+            admin.setName("ROLE_ADMIN");
+            authorityRepository.save(admin);
+
+
             Account account1 = new Account();
             Account account2 = new Account();
 
@@ -34,11 +50,19 @@ public class SeedData implements CommandLineRunner {
             account1.setLastName("user1LastName");
             account1.setEmail("user1@user.com");
             account1.setPassword("12345");
+            Set<Authority> authorities1 = new HashSet<>();
+            authorityRepository.findById("ROLE_USER").ifPresent(authorities1::add);
+            account1.setAuthorities(authorities1);
+
 
             account2.setFirstName("user2FirstName");
             account2.setLastName("user2LastName");
             account2.setEmail("user2@user.com");
             account2.setPassword("12345");
+            Set<Authority> authorities2 =new HashSet<>();
+            authorityRepository.findById("ROLE_ADMIN").ifPresent(authorities2::add);
+            authorityRepository.findById("ROLE_USER").ifPresent(authorities2::add);
+            account2.setAuthorities(authorities2);
 
             accountManager.save(account1);
             accountManager.save(account2);

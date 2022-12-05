@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -71,4 +72,38 @@ public class PostController {
             return "404";
         }
     }
+
+    @PostMapping("/posts/{id}")
+    @PreAuthorize("isAuthenticated()")
+    public String updatePost(@PathVariable Long id, Post post, BindingResult result, Model model) {
+
+        Optional<Post> optionalPost = postManager.getById(id);
+        if (optionalPost.isPresent()) {
+            Post existingPost = optionalPost.get();
+
+            existingPost.setTitle(post.getTitle());
+            existingPost.setBody(post.getBody());
+
+            postManager.save(existingPost);
+        }
+
+        return "redirect:/posts/" + post.getId();
+    }
+    @GetMapping("/posts/{id}/delete")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public String deletePost(@PathVariable Long id) {
+
+        // find post by id
+        Optional<Post> optionalPost = postManager.getById(id);
+        if (optionalPost.isPresent()) {
+            Post post = optionalPost.get();
+
+            postManager.delete(post);
+            return "redirect:/";
+        } else {
+            return "404";
+        }
+    }
+
+
 }

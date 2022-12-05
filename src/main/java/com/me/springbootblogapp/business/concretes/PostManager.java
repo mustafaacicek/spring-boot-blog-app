@@ -30,6 +30,12 @@ public class PostManager implements PostService {
         if (post.getId() == null) {
             post.setCreatedAt(LocalDateTime.now());
         }
+        post.setUpdatedAt(LocalDateTime.now());
         return postRepository.save(post);
+    }
+
+    @Override
+    public void delete(Post post) {
+        postRepository.delete(post);
     }
 }
